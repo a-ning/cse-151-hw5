@@ -41,23 +41,60 @@ public class hw5 {
 		return res;
 	}
 
-	public static void kPerceptron (LinkedList<String[]> data, int strlen) {
-		Iterator<String[]> it = data.iterator();
-		double product;
-		String sequence;
+	/* function to calculate dot product */
+	public static int dot (int[] a, int[] b) {
+		int res = 0;
+
+		for (int i = 0; i < a.length; i++) {
+			res += a[i] * b[i];
+		}
+
+		return res;
+	}
+
+	/* function to correct w if a mistake was made */
+	public static int[] adjust (int[] w, int y, int[] x) {
+		for (int i = 0; i < x.length; i++) {
+			w[i] += y * x[i];
+		}
+
+		return w;
+	}
+
+	public static void kPerceptron (LinkedList<String[]> data, int p) {
+		/* size of w according to p; alphabet size is 20 */
+		int[] w = new int[(int)Math.pow(20, p)];
+
+		/* initialize w to 0 */
+		for (int i = 0; i < w.length; i++) {
+			w[i] = 0;
+		}
+
+		/* sequences and label to pull from data */
+		String sSequence, tSequence;
 		int label;
 
-		while (it.hasNext()) {
-			String[] curr = it.next();
+		Iterator<String[]> it = data.iterator();
 
-			product = 0.0;
-			sequence = curr[0];
+		String[] curr = it.next();
+		sSequence = curr[0];
+		
+		while (it.hasNext()) {
+			curr = it.next();
+
+			tSequence = curr[0];
 			label = Integer.parseInt (curr[1]);
 
-			for (int i = 0; i < sequence.length(); i++) {
+			int[] res = kernel (sSequence, tSequence, p);
 
+			if (label * dot (w, res) <= 0) {
+				w = adjust (w, label, res);
 			}
 		}
+	}
+
+	public static int[] kernel (String s, String t, int p) {
+		return new int[1];
 	}
 
 	/* main function */
@@ -70,5 +107,8 @@ public class hw5 {
 
 		trainData = read (trainFile);
 		testData = read (testFile);
+
+		kPerceptron (trainData, 3);
+		kPerceptron (trainData, 4);
 	}
 }
