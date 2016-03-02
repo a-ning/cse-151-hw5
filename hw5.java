@@ -61,14 +61,36 @@ public class hw5 {
 		return w;
 	}
 
+	/* function to find substrings */
+	public static Vector<String> findSubstrings (String string, int p) {
+		Vector<String> res = new Vector<String>();
+
+		int j = p;
+
+		for (int i = 0; j <= string.length(); i++, j++) {
+			String sub = string.substring (i, j);
+			res.add (sub);
+		}
+
+		return res;
+	}
+
+	/* string kernel */
+	public static int[] kernel (String s, String t, int p) {
+		/* find substrings of s and t */
+		Vector<String> subS = findSubstrings (s, p);
+		Vector<String> subT = findSubstrings (t, p);
+
+		return new int[1];
+	}
+
+	/* kernel perceptron */
 	public static void kPerceptron (LinkedList<String[]> data, int p) {
 		/* size of w according to p; alphabet size is 20 */
 		int[] w = new int[(int)Math.pow(20, p)];
 
 		/* initialize w to 0 */
-		for (int i = 0; i < w.length; i++) {
-			w[i] = 0;
-		}
+		Arrays.fill (w, 0);
 
 		/* sequences and label to pull from data */
 		String sSequence, tSequence;
@@ -91,10 +113,6 @@ public class hw5 {
 				w = adjust (w, label, res);
 			}
 		}
-	}
-
-	public static int[] kernel (String s, String t, int p) {
-		return new int[1];
 	}
 
 	/* main function */
