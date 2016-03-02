@@ -62,8 +62,8 @@ public class hw5 {
 	}
 
 	/* function to find substrings */
-	public static Vector<String> findSubstrings (String string, int p) {
-		Vector<String> res = new Vector<String>();
+	public static ArrayList<String> findSubstrings (String string, int p) {
+		ArrayList<String> res = new ArrayList<String>();
 
 		int j = p;
 
@@ -76,12 +76,17 @@ public class hw5 {
 	}
 
 	/* string kernel */
-	public static int[] kernel (String s, String t, int p) {
+	public static int kernel (String s, String t, int p) {
 		/* find substrings of s and t */
-		Vector<String> subS = findSubstrings (s, p);
-		Vector<String> subT = findSubstrings (t, p);
+		ArrayList<String> subS = findSubstrings (s, p);
+		ArrayList<String> subT = findSubstrings (t, p);
 
-		return new int[1];
+		/* find # common substrings btwn s and t */
+		ArrayList<String> common = new ArrayList<String> (subS);
+		common.retainAll (subT);
+		Set<String> commonUnique = new HashSet<String> (common);
+
+		return commonUnique.size();
 	}
 
 	/* kernel perceptron */
@@ -98,6 +103,21 @@ public class hw5 {
 
 		Iterator<String[]> it = data.iterator();
 
+		/* !!!!!!!!!!!!!!!!!!!!!!!!! gabe halp !!!!!!!!!!!!!!!!!!!!!!!!! */
+
+		/* i dont think this is right -- the way it is now, i'm taking
+		 * two different sequences from the data and comparing their
+		 * substrings. but if i'm thinking about this correctly, shouldn't
+		 * i be taking one sequence at a time and comparing its substrings
+		 * to the entire alphabet's collection of possible substrings? 
+		 *
+		 * so right now in K (s, t), s and t come from the data set. 
+		 * but should only s come from the data set and t be the alphabet
+		 * of 20? pls confirm 
+		 *
+		 * (and if this is the case, do you remember how to find all the
+		 * possible substrings over the alphabet...) */
+		
 		String[] curr = it.next();
 		sSequence = curr[0];
 		
@@ -107,11 +127,11 @@ public class hw5 {
 			tSequence = curr[0];
 			label = Integer.parseInt (curr[1]);
 
-			int[] res = kernel (sSequence, tSequence, p);
+			int res = kernel (sSequence, tSequence, p);
 
-			if (label * dot (w, res) <= 0) {
-				w = adjust (w, label, res);
-			}
+			// if (label * dot (w, res) <= 0) {
+			// 	w = adjust (w, label, res);
+			// }
 		}
 	}
 
