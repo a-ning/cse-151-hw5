@@ -13,8 +13,8 @@ import java.lang.*;
 public class hw5 {
 
 	/* function to read files */
-	public static LinkedList<int[]> read (File file) {
-		LinkedList<int[]> res = new LinkedList<int[]>();
+	public static LinkedList<String[]> read (File file) {
+		LinkedList<String[]> res = new LinkedList<String[]>();
 		String line = null;
 
 		try {
@@ -24,17 +24,10 @@ public class hw5 {
 			/* while there are still lines to read */
 			while ((line = bReader.readLine()) != null) {
 				/* split each line by spaces */
-				String[] vals = line.split (" ");
-				/* array to store values */
-				int[] fVals = new int[vals.length];
-
-				/* store values as integers */
-				for (int i = 0; i < fVals.length; i++) {
-					fVals[i] = Integer.parseInt (vals[i]);
-				}
+				String[] vals = line.split ("  ");
 
 				/* add to LL */
-				res.add (fVals);
+				res.add (vals);
 			}
 
 			/* close file */
@@ -47,8 +40,35 @@ public class hw5 {
 
 		return res;
 	}
-}
 
-public static void main (String[] args) {
-	
+	public static void kPerceptron (LinkedList<String[]> data, int strlen) {
+		Iterator<String[]> it = data.iterator();
+		double product;
+		String sequence;
+		int label;
+
+		while (it.hasNext()) {
+			String[] curr = it.next();
+
+			product = 0.0;
+			sequence = curr[0];
+			label = Integer.parseInt (curr[1]);
+
+			for (int i = 0; i < sequence.length(); i++) {
+
+			}
+		}
+	}
+
+	/* main function */
+	public static void main (String[] args) {
+		LinkedList<String[]> trainData, testData;
+		File trainFile, testFile;
+
+		trainFile = new File ("hw5train.txt");
+		testFile = new File ("hw5test.txt");
+
+		trainData = read (trainFile);
+		testData = read (testFile);
+	}
 }
