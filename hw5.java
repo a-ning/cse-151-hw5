@@ -90,7 +90,8 @@ public class hw5 {
 	}
 
 	/* kernel perceptron */
-	public static void kPerceptron (LinkedList<String[]> data, int p) {
+	public static void kPerceptron (LinkedList<String[]> trainData, 
+	LinkedList<String[]> testData, int p) {
 		/* size of w according to p; alphabet size is 20 */
 		int[] w = new int[(int)Math.pow(20, p)];
 
@@ -100,39 +101,88 @@ public class hw5 {
 		/* sequences and label to pull from data */
 		String sSequence, tSequence;
 		int label;
+		Vector<String> seqs = new Vector<String>();
+		Vector<Integer> labels = new Vector<Integer>();
 
-		Iterator<String[]> it = data.iterator();
-
-		/* !!!!!!!!!!!!!!!!!!!!!!!!! gabe halp !!!!!!!!!!!!!!!!!!!!!!!!! */
-
-		/* i dont think this is right -- the way it is now, i'm taking
-		 * two different sequences from the data and comparing their
-		 * substrings. but if i'm thinking about this correctly, shouldn't
-		 * i be taking one sequence at a time and comparing its substrings
-		 * to the entire alphabet's collection of possible substrings? 
-		 *
-		 * so right now in K (s, t), s and t come from the data set. 
-		 * but should only s come from the data set and t be the alphabet
-		 * of 20? pls confirm 
-		 *
-		 * (and if this is the case, do you remember how to find all the
-		 * possible substrings over the alphabet...) */
+		Iterator<String[]> it = trainData.iterator();
 		
 		String[] curr = it.next();
-		sSequence = curr[0];
+
+		seqs.add (curr[0]);
+		labels.add (Integer.parseInt (curr[1]));
+
+		double res;
 		
 		while (it.hasNext()) {
 			curr = it.next();
 
+			/* get current sequence and label */
 			tSequence = curr[0];
 			label = Integer.parseInt (curr[1]);
 
-			int res = kernel (sSequence, tSequence, p);
+			/* variable to hold the summation */
+			res = 0.0;
+
+			/* y_i1 * K(x_i1, x) + ... + y_ik * K (x_ik, x) 
+			 * x_i1..x_ik 	= previously mislabeled sequences,
+			 * y_i1..y_ik 	= their labels,
+			 * x 			= current sequence */
+			for (int i = 0; i < seqs.size(); i++) {
+				sSequence = seqs.elementAt (i);
+				res += labels.elementAt (i) * kernel (sSequence, tSequence, p);
+			}
+
+			/* if predicted wrong */
+			if (label * res <= 0) {
+				seqs.add (tSequence);
+				labels.add (label);
+			}
+
+			// tSequence = curr[0];
+			// label = Integer.parseInt (curr[1]);
+
+			// res = res + label * kernel (sSequence, tSequence, p);
 
 			// if (label * dot (w, res) <= 0) {
 			// 	w = adjust (w, label, res);
 			// }
 		}
+
+		/* training error */
+		float trainError = errs (trainData, seqs, labels, p);
+		System.out.println ("\ttraining error = " + trainError);
+
+		/* test error */
+		float testError = errs (testData, seqs, labels, p);
+		System.out.println ("\ttest error = " + testError + "\n");
+	}
+
+	public static float errs (LinkedList<String[]> data, Vector<String> seqs, 
+	Vector<Integer> labels, int p) {
+		String sSeq, tSeq;
+		int label;
+		double res;
+		int errs = 0;
+
+		Iterator<String[]> it = data.iterator();
+
+		while (it.hasNext()) {
+			String[] curr = it.next();
+			tSeq = curr[0];
+			label = Integer.parseInt (curr[1]);
+			res = 0.0;
+
+			for (int i = 0; i < seqs.size(); i++) {
+				sSeq = seqs.elementAt (i);
+				res += labels.elementAt (i) * kernel (sSeq, tSeq, p);
+			}
+
+			if (label * res <= 0) {
+				errs++;
+			}
+		}
+
+		return (float)errs / data.size();
 	}
 
 	/* main function */
@@ -146,7 +196,10 @@ public class hw5 {
 		trainData = read (trainFile);
 		testData = read (testFile);
 
-		kPerceptron (trainData, 3);
-		kPerceptron (trainData, 4);
+		System.out.println ("running kernel perceptron with p = 3...\n");
+		kPerceptron (trainData, testData, 3);
+
+		System.out.println ("running kernel perceptron with p = 4...\n");
+		kPerceptron (trainData, testData, 4);
 	}
 }
